@@ -1,11 +1,15 @@
 package by.teachmeskills;
 
 import by.teachmeskills.dto.Account;
+import by.teachmeskills.pages.AccountDetailsPage;
 import by.teachmeskills.steps.AccountSteps;
 import by.teachmeskills.steps.LoginSteps;
 import com.github.javafaker.Faker;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class AccountsTest extends BaseTest {
 
@@ -24,6 +28,12 @@ public class AccountsTest extends BaseTest {
         expAccount.setWebSite(faker.internet().url());
         expAccount.setType("Analyst");
 
-        new AccountSteps(driver).createNewAccount(expAccount);
+        AccountDetailsPage accountDetailsPage = new AccountSteps(driver).createNewAccount(expAccount);
+        assertTrue(accountDetailsPage.isAccountCreationNotificationDisplayed(), "Notification is not displayed");
+        String message = accountDetailsPage.getAccountCreationNotificationMessage();
+        assertTrue(message.contains(accountName), "Notification does not contain account name");
+        //TODO ADD EQUALS AND HASH CODE
+        Account actAccount = accountDetailsPage.getAccountDetails();
+        assertEquals(actAccount, expAccount, "Account was not created correctly");
     }
 }
