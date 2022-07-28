@@ -2,11 +2,13 @@ package by.teachmeskills.pages;
 
 import by.teachmeskills.dto.Account;
 import by.teachmeskills.wrappers.AccountDetailsTextField;
+import lombok.extern.log4j.Log4j2;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+@Log4j2
 public class AccountDetailsPage extends BasePage {
 
     private final By detailsTabLocator = By.xpath("//a[text()='Details']");
@@ -21,8 +23,10 @@ public class AccountDetailsPage extends BasePage {
         waitForPageLoaded();
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(detailsTabLocator));
+            log.debug("The page {} was opened successfully", "Account Details");
             return true;
         } catch (TimeoutException e) {
+            log.error("The page {} was not opened because of error: {}", "Account Details", e.getMessage());
             return false;
         }
     }
@@ -34,10 +38,11 @@ public class AccountDetailsPage extends BasePage {
     }
 
     public Account getAccountDetails() {
-        Account account = new Account(getAccountName());
-        account.setWebSite(getWebsite());
-        account.setType(getType());
-        return account;
+        return Account.builder()
+                      .accountName(getAccountName())
+                      .type(getType())
+                      .webSite(getWebsite())
+                      .build();
     }
 
     public String getAccountName() {
